@@ -1,0 +1,91 @@
+package sockettt;
+import java.net.*;
+import java.io.*;
+import java.util.Arrays;
+
+public class servidor {
+
+	final static int PUERTO=5000;
+    static ServerSocket sc;
+    static Socket so;
+    static DataOutputStream salida;
+    static String mensajeRecibido;
+	
+	public static void main(String[] args) throws Exception {
+		// TODO Auto-generated method stub
+
+		initServer();
+
+	}
+	
+	public static void initServer(){// throws Exception{
+          BufferedReader entrada;
+        //Boolean ciclo=true;
+          String IP,rangoA,rangoB,respuesta="";
+          
+        
+try{
+            
+            sc = new ServerSocket(PUERTO );/* crea socket servidor que escuchara en puerto 5000*/
+            so=new Socket();
+            System.out.println("Esperando una conexión:");
+            so = sc.accept();
+//Inicia el socket, ahora esta esperando una conexión por parte del cliente
+            System.out.println("Un cliente se ha conectado.");
+//Canales de entrada y salida de datos
+
+            entrada = new BufferedReader(new InputStreamReader(so.getInputStream()));
+            salida = new DataOutputStream(so.getOutputStream());
+            System.out.println("Confirmando conexion al cliente....");
+          //  salida.writeUTF("Conexion exitosa...\r\n");
+            IP= entrada.readLine();
+            rangoA=entrada.readLine();
+            rangoB=entrada.readLine();
+            System.out.println("IP:"+IP+" rangoA: "+rangoA+ " rangoB:" +rangoB);
+            int rangoa= Integer.parseInt(rangoA);
+            int rangob = Integer.parseInt(rangoB);
+           // salida.writeUTF("Se recibio tu mensaje.n Terminando conexion...");
+           // PrintWriter out = new PrintWriter(new OutputStreamWriter(so.getOutputStream()),true);
+            
+            while(rangoa <= rangob){
+                try{
+                //poner el ciclo dependiendo de los rangos
+                
+                Socket socket= new Socket (IP,rangoa);
+                BufferedReader in = new BufferedReader (new InputStreamReader(socket.getInputStream()));
+                PrintWriter out = new PrintWriter(new OutputStreamWriter(socket.getOutputStream()),true);
+        	//if (0==0)
+        	//	return;
+        	String c = "Saludos desde el cliente";
+                out.println(c);
+                respuesta=respuesta+"Esta disponible el puerto: "+ rangoa+"\n";
+        	//String line = "Esta diponible el puerto:"+rangoA;
+        	
+               // System.out.println(line);
+        	socket.close();
+                rangoa=rangoa+1;
+                }catch (IOException e)
+              {
+               		//System.out.println("No esta disponible el puerto:"+rangoA);
+                        respuesta=respuesta+"No esta disponible el puerto: "+ rangoa+"\n";
+                        rangoa=rangoa+1;
+              }
+                //System.out.println(respuesta);
+              }//fin del ciclo while
+            System.out.println(respuesta);
+            salida.writeUTF(respuesta);
+            
+            
+            
+            //salida.writeUTF("se realizo correcto");
+            sc.close();//Aqui se cierra la conexión con el cliente
+
+            
+            
+}catch(Exception e ){}
+
+	}
+	
+	
+}
+	
